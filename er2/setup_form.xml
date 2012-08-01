@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dynaForm type="xmlform" name="setup_form" width="500" enabletemplate="0" mode="">
+  <TITLE_X type="title" enablehtml="0" btn_cancel="Cancel">
+    <en>Details Report</en>
+  </TITLE_X>
+  <REPORT_DATE_X type="date" beforedate="-3y" afterdate="1y" mask="m-d-Y" editable="1" required="1" readonly="0" showtime="0" defaultvalue_sel="empty" size="15" mode="edit" btn_cancel="Cancel" relativedate="1" startdate="" enddate="" defaultvalue="" hint="" savelabel="0">
+    <en>Date</en>
+  </REPORT_DATE_X>
+  <REPORT_TYPE_X type="dropdown" required="1" readonly="0" savelabel="0" mode="edit" sqlconnection="rp" dependentfields="REPORT_CODE_X,REPORT_GL_X,DESCRIPT_X" options="Array" btn_cancel="Cancel">
+    <![CDATA[
+  select description,description from expense ORDER BY description ]]>
+  <en>Description <option name="">-Select-</option></en>
+</REPORT_TYPE_X>
+ <REPORT_CODE_X type="text" maxlength="64" validate="Any" required="0" readonly="0" size="10" mode="edit" dependentfields="" sqlconnection="rp" btn_cancel="Cancel"><![CDATA[
+  select code,code from expense where description='@#REPORT_TYPE_X'
+  ]]><en>Codes </en>
+</REPORT_CODE_X>
+  <REPORT_PAYEE_X type="text" maxlength="64" validate="Any" required="1" readonly="0" size="10" strto="UPPER" sqlconnection="" mode="edit" btn_cancel="Cancel">
+    <en> Payee</en>
+  </REPORT_PAYEE_X>
+  <REPORT_WHO_RECEIVED_CASH_X type="text" maxlength="64" validate="Any" required="1" readonly="0" size="18" strto="UPPER" sqlconnection="" mode="edit" btn_cancel="Cancel">
+    <en>Client or who it was  </en>
+  </REPORT_WHO_RECEIVED_CASH_X>
+  <REPORT_EXPLANATION_X type="textarea" required="1" readonly="0" rows="4" cols="22" strto="UPPER" mode="edit" btn_cancel="Cancel">
+    <en>Explanation</en>
+  </REPORT_EXPLANATION_X>
+  <REPORT_DESTINATION_X type="text" maxlength="64" validate="Any" required="1" readonly="0" size="18" strto="UPPER" sqlconnection="" mode="edit" btn_cancel="Cancel">
+    <en>Destination</en>
+  </REPORT_DESTINATION_X>
+  <REPORT_AMOUNT_X type="text" maxlength="64" validate="Real" required="1" readonly="0" size="10" sqlconnection="" mode="edit" btn_cancel="Cancel" mask="" strto="" defaultvalue="" hint="" formula="" function="sum" savelabel="0">
+    <en>Amount USD</en>
+  </REPORT_AMOUNT_X>
+  <REPORT_CURRENCY_X type="dropdown" required="1" readonly="0" savelabel="0" mode="edit" sqlconnection="" dependentfields="REPORT_EXCHANGE_RATE_X" options="Array" btn_cancel="Cancel">
+  select CURRENCY,CURRENCY  from PM_ER_EXCHANGE_RATE ORDER BY CURRENCY
+  <en>Currency<option name="">---Select---</option></en>
+</REPORT_CURRENCY_X>
+  <REPORT_EXCHANGE_RATE_X type="text" maxlength="64" validate="Any" required="1" readonly="0" size="10" sqlconnection="" mode="edit" btn_cancel="Cancel"><![CDATA[
+  select EXCHANGE_RATE,EXCHANGE_RATE from PM_ER_EXCHANGE_RATE where CURRENCY='@#REPORT_CURRENCY_X'
+  ]]><en>Exchange Rate</en>
+</REPORT_EXCHANGE_RATE_X>
+  <REPORT_RECEIPT_X type="dropdown" required="1" readonly="0" savelabel="0" mode="edit" options="Array" btn_cancel="Cancel">
+    <en>Receipt (YES/NO)<option name="">-Select-</option><option name="YES">YES</option><option name="NO">NO</option></en>
+  </REPORT_RECEIPT_X>
+  <REPORT_GL_X type="text" maxlength="64" validate="Any" required="0" readonly="1" size="10" mode="edit" dependentfields="" sqlconnection="rp" btn_cancel="Cancel"><![CDATA[
+ select gl,gl from expense where description=@@REPORT_TYPE_X
+  ]]><en>GL#</en>
+</REPORT_GL_X>
+  <DESCRIPT_X type="text" maxlength="64" validate="Any" required="0" readonly="1" size="27" sqlconnection="rp" mode="edit" btn_cancel="Cancel" dependentfields=""><![CDATA[
+ select desctotals,desctotals from expense where description=@@REPORT_TYPE_X
+  ]]><en>Description Totals</en>
+</DESCRIPT_X>
+  <PREPAID_DATE_X type="date" beforedate="-3y" afterdate="1y" mask="m-d-Y" editable="1" required="1" readonly="0" showtime="0" defaultvalue_sel="empty" size="15" mode="edit" btn_cancel="Cancel" relativedate="1" startdate="" enddate="" defaultvalue="" hint="" savelabel="0">
+    <en>Month if Pre-pay </en>
+  </PREPAID_DATE_X>
+  <SAVE_X type="button" onclick="saveForm();">
+    <en>Save</en>
+  </SAVE_X>
+  <JS_SCRIPT_X type="javascript">
+    <![CDATA[
+function saveForm()
+{
+  newRowNo = Number_Rows_Grid("REPORT_GRID", "REPORT_DATE");// + 1;
+  //getObject("REPORT_GRID").addGridRow();
+  getGridField("REPORT_GRID", newRowNo, "REPORT_DATE").value = getField("REPORT_DATE_X").value;
+  getGridField("REPORT_GRID", newRowNo, "REPORT_TYPE").value = getField("REPORT_TYPE_X").value;
+  getGridField("REPORT_GRID", newRowNo, "REPORT_CODE").value = getField("REPORT_CODE_X").value;
+  getGridField("REPORT_GRID", newRowNo, "REPORT_PAYEE").value = getField("REPORT_PAYEE_X").value;
+  getGridField("REPORT_GRID", newRowNo, "REPORT_WHO_RECEIVED_CASH").value = getField("REPORT_WHO_RECEIVED_CASH_X").value;
+  getGridField("REPORT_GRID", newRowNo, "REPORT_EXPLANATION").value = getField("REPORT_EXPLANATION_X").value;
+  getGridField("REPORT_GRID", newRowNo, "REPORT_DESTINATION").value = getField("REPORT_DESTINATION_X").value;
+  getGridField("REPORT_GRID", newRowNo, "REPORT_AMOUNT").value = getField("REPORT_AMOUNT_X").value;
+  getGridField("REPORT_GRID", newRowNo, "REPORT_CURRENCY").value = getField("REPORT_CURRENCY_X").value;
+  getGridField("REPORT_GRID", newRowNo, "REPORT_EXCHANGE_RATE").value = getField("REPORT_EXCHANGE_RATE_X").value;
+  getGridField("REPORT_GRID", newRowNo, "REPORT_RECEIPT").value = getField("REPORT_RECEIPT_X").value;
+  getGridField("REPORT_GRID", newRowNo, "REPORT_GL").value = getField("REPORT_GL_X").value;
+  getGridField("REPORT_GRID", newRowNo, "DESCRIPT").value = getField("DESCRIPT_X").value;
+  getGridField("REPORT_GRID", newRowNo, "PREPAID_DATE").value = getField("PREPAID_DATE_X").value;
+  oBusquedaNandinaPanel.remove();
+}
+/*
+function fn_time_select(Tvalue)
+  {
+    
+    iNumberRow = <? echo "'".$_POST['OID']."'"?>; //sValue
+    document.getElementById('form[SUB_FLIGHT_SCHEDULE]['+iNumberRow+'][DEPART_TIMES]').value = Tvalue;
+    oBusquedaNandinaPanel.remove();
+    
+  }*/
+]]>
+  </JS_SCRIPT_X>
+</dynaForm>
